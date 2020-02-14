@@ -10,7 +10,7 @@ impl Read for ReadBuffer {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
         let num = self.data.len().max(buf.len());
         let take: Vec<u8>  = self.data.drain(0..num).collect();
-        buf.copy_from_slice(&take[..]);
+        buf[0..num].copy_from_slice(&take[..]);
         Ok(num)
     }
 }
