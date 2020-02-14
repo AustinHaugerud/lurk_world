@@ -15,6 +15,11 @@ impl UserData for LurkName {
         methods.add_meta_function(MetaMethod::Eq, |_, (lhs, rhs): (LurkName, LurkName)| {
             Ok(lhs.eq(&rhs))
         });
+
+        methods.add_method("string", |ctx, this, ()| {
+            let string = String::from_utf8_lossy(&this.bytes);
+            Ok(string.to_string())
+        });
     }
 }
 
