@@ -58,6 +58,7 @@ impl ClientEventBuffer {
 impl UserData for ClientEventBuffer {
     fn add_methods<'lua, M: UserDataMethods<'lua, Self>>(methods: &mut M) {
         use rlua::String;
+        use std::string::String as StdString;
         methods.add_method_mut("poll", |ctx, buffer, ()| {
             let table = ctx.create_table()?;
             if let Some(event) = buffer.pop() {
@@ -70,7 +71,8 @@ impl UserData for ClientEventBuffer {
                                 table.set("type", "message")?;
                                 table.set("recipient", msg.recipient)?;
                                 table.set("sender", msg.sender)?;
-                                table.set("message", msg.message.clone())?;
+                                let msg_string = StdString::from_utf8_lossy(&msg.message);
+                                table.set("message", msg_string.to_string())?;
                             }
                             LurkReadEvent::ChangeRoom(chgrm) => {
                                 table.set("type", "change_room")?;
