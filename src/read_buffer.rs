@@ -21,6 +21,7 @@ impl ReadBuffer {
     }
 
     pub fn fill_buf(&mut self) -> Result<usize, Error> {
+        println!("Filling the buffer.");
         let mut temp = Vec::with_capacity(std::u16::MAX as usize);
         let read = self.read(&mut temp)?;
         self.data.append(&mut temp);
