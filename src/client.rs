@@ -2,6 +2,7 @@ use crate::read::{LurkPollEvent, LurkRead, LurkReadEvent};
 use std::io::BufReader;
 use std::io::BufWriter;
 use std::net::TcpStream;
+use crate::read_buffer::ReadBuffer;
 
 pub struct ClientFactory {
     id_cursor: u128,
@@ -19,7 +20,7 @@ impl ClientFactory {
         let write_handle = stream.try_clone().map_err(|_| {})?;
         Ok(Client {
             id: self.id_cursor,
-            read: BufReader::new(stream),
+            read: stream.into(),
             write: BufWriter::new(write_handle),
             poisoned: false,
         })
@@ -30,7 +31,7 @@ const CLIENT_BUFFER_LIMIT: usize = 1024 * 1024;
 
 pub struct Client {
     id: u128,
-    read: BufReader<TcpStream>,
+    read: ReadBuffer,
     write: BufWriter<TcpStream>,
     poisoned: bool,
 }

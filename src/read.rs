@@ -90,6 +90,7 @@ pub trait LurkRead {
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{BufReader, Read, BufRead};
 use std::net::TcpStream;
+use crate::read_buffer::ReadBuffer;
 
 fn start_match<T: TypeCode>(buffer: &[u8]) -> bool {
     if buffer.len() > 0 {
@@ -123,7 +124,7 @@ fn poll<T: TypeCode + LurkReadable>(buffer: &[u8]) -> LurkPollState {
     }
 }
 
-impl LurkRead for BufReader<TcpStream> {
+impl LurkRead for ReadBuffer {
     fn poll_message(&self) -> LurkPollState {
         let buffer = self.buffer();
 
@@ -317,7 +318,7 @@ impl LurkRead for BufReader<TcpStream> {
         // (empty fill, would block error) then return pending.
         if self.buffer().is_empty() {
             match self.fill_buf() {
-                Ok(fill) => if fill.len() == 0 {
+                Ok(fill) => if fill == 0 {
                     return Ok(LurkPollEvent::Pending);
                 },
                 Err(e) => if e.kind() == io::ErrorKind::WouldBlock {
