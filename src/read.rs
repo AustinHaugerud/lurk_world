@@ -155,7 +155,7 @@ impl LurkRead for ReadBuffer {
         self.read(&mut recipient_buffer).map_err(|_| {})?;
         let mut sender_buffer = [0u8; 32];
         self.read(&mut sender_buffer).map_err(|_| {})?;
-        let mut message_buffer: Vec<u8> = Vec::with_capacity(msg_len as usize);
+        let mut message_buffer: Vec<u8> = vec![0u8; msg_len as usize];
         self.read(&mut message_buffer).map_err(|_| {})?;
         Ok(Message {
             recipient: recipient_buffer.into(),
@@ -237,7 +237,7 @@ impl LurkRead for ReadBuffer {
 
         let desc_len = self.read_u16::<LittleEndian>().map_err(|_| {})?;
 
-        let mut description_buffer: Vec<u8> = Vec::with_capacity(desc_len as usize);
+        let mut description_buffer: Vec<u8> = vec![0u8; desc_len as usize];
         self.read(&mut description_buffer).map_err(|_| {})?;
 
         Ok(Character {
@@ -301,7 +301,7 @@ impl LurkRead for ReadBuffer {
 
         for _ in 0..num_extensions {
             let ext_len = self.read_u16::<LittleEndian>().map_err(|_| {})?;
-            let mut ext: Vec<u8> = Vec::with_capacity(ext_len as usize);
+            let mut ext: Vec<u8> = vec![0u8; ext_len as usize];
             self.read(&mut ext).map_err(|_| {})?;
             extensions.push(ext);
         }
