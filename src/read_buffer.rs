@@ -24,7 +24,7 @@ impl ReadBuffer {
     pub fn fill_buf(&mut self) -> Result<usize, Error> {
         let mut temp = [0u8; 32_000];
         let read = self.source.read(&mut temp)?;
-        self.data.append(&mut temp.to_vec());
+        self.data.append(&mut temp[..read].to_vec());
         Ok((read))
     }
 
