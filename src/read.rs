@@ -91,6 +91,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{BufReader, Read, BufRead};
 use std::net::TcpStream;
 use crate::read_buffer::ReadBuffer;
+use std::error::Error;
 
 fn start_match<T: TypeCode>(buffer: &[u8]) -> bool {
     if buffer.len() > 0 {
@@ -324,6 +325,7 @@ impl LurkRead for ReadBuffer {
                 Err(e) => if e.kind() == io::ErrorKind::WouldBlock {
                     return Ok(LurkPollEvent::Pending);
                 } else {
+                    eprintln!("{}", e.description());
                     return Err(());
                 }
             }
