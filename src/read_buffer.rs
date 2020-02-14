@@ -8,7 +8,7 @@ pub struct ReadBuffer {
 
 impl Read for ReadBuffer {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
-        let num = self.data.len().max(buf.len());
+        let num = self.data.len().min(buf.len());
         let take: Vec<u8>  = self.data.drain(0..num).collect();
         buf[0..num].copy_from_slice(&take[..]);
         Ok(num)
@@ -23,7 +23,6 @@ impl ReadBuffer {
     pub fn fill_buf(&mut self) -> Result<usize, Error> {
         let mut temp = [0u8; 32_000];
         let read = self.source.read(&mut temp)?;
-        if read > 0 { println!("Read: {}", read); }
         self.data.append(&mut temp.to_vec());
         Ok((read))
     }
